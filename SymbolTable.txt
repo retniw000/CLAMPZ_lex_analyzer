@@ -1,0 +1,69 @@
+CLAMPZ SYMBOL TABLE
+Source file: (unsaved program)
+----------------------------------------------------------------------------------------------------
+No.   Line   Lexeme                         Token            Category              Remarks
+----------------------------------------------------------------------------------------------------
+1     1      // sum 1..5, skipping 3        COMMENT          COMMENT               
+2     3      int                            INT              KEYWORD               
+3     3      total                          IDENTIFIER       IDENTIFIER            
+4     3      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+5     3      0                              INTEGER          CONSTANT              
+6     3      ;                              SEMICOLON        DELIMITER             
+7     5      for                            FOR              KEYWORD               
+8     5      (                              LEFT_PAREN       BRACKET               
+9     5      int                            INT              KEYWORD               
+10    5      i                              IDENTIFIER       IDENTIFIER            
+11    5      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+12    5      1                              INTEGER          CONSTANT              
+13    5      ;                              SEMICOLON        DELIMITER             
+14    5      i                              IDENTIFIER       IDENTIFIER            
+15    5      <=                             LESS_EQUAL       RELATIONAL_OPERATOR   
+16    5      5                              INTEGER          CONSTANT              
+17    5      ;                              SEMICOLON        DELIMITER             
+18    5      i                              IDENTIFIER       IDENTIFIER            
+19    5      ++                             INCREMENT        ARITHMETIC_OPERATOR   
+20    5      )                              RIGHT_PAREN      BRACKET               
+21    5      {                              LEFT_BRACE       BRACKET               
+22    6      on                             ON               KEYWORD               
+23    6      (                              LEFT_PAREN       BRACKET               
+24    6      i                              IDENTIFIER       IDENTIFIER            
+25    6      ==                             EQUAL            RELATIONAL_OPERATOR   
+26    6      3                              INTEGER          CONSTANT              
+27    6      )                              RIGHT_PAREN      BRACKET               
+28    6      {                              LEFT_BRACE       BRACKET               
+29    7      skip                           SKIP             RESERVED_WORD         
+30    7      ;                              SEMICOLON        DELIMITER             
+31    8      }                              RIGHT_BRACE      BRACKET               
+32    9      total                          IDENTIFIER       IDENTIFIER            
+33    9      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+34    9      total                          IDENTIFIER       IDENTIFIER            
+35    9      +                              PLUS             ARITHMETIC_OPERATOR   
+36    9      i                              IDENTIFIER       IDENTIFIER            
+37    9      ;                              SEMICOLON        DELIMITER             
+38    10     print                          PRINT            KEYWORD               
+39    10     (                              LEFT_PAREN       BRACKET               
+40    10     "i = "                         STRING_LITERAL   CONSTANT              
+41    10     +                              PLUS             ARITHMETIC_OPERATOR   
+42    10     i                              IDENTIFIER       IDENTIFIER            
+43    10     )                              RIGHT_PAREN      BRACKET               
+44    10     ;                              SEMICOLON        DELIMITER             
+45    11     }                              RIGHT_BRACE      BRACKET               
+46    13     print                          PRINT            KEYWORD               
+47    13     (                              LEFT_PAREN       BRACKET               
+48    13     "total = "                     STRING_LITERAL   CONSTANT              
+49    13     +                              PLUS             ARITHMETIC_OPERATOR   
+50    13     total                          IDENTIFIER       IDENTIFIER            
+51    13     )                              RIGHT_PAREN      BRACKET               
+52    13     ;                              SEMICOLON        DELIMITER             
+----------------------------------------------------------------------------------------------------
+Total tokens: 52
+  KEYWORD               6
+  RESERVED_WORD         1
+  IDENTIFIER            10
+  CONSTANT              6
+  ARITHMETIC_OPERATOR   4
+  ASSIGNMENT_OPERATOR   3
+  RELATIONAL_OPERATOR   2
+  DELIMITER             7
+  BRACKET               12
+  COMMENT               1

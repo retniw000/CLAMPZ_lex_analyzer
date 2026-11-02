@@ -1,0 +1,141 @@
+/*
+   CLAMPZ sample program
+   Uses every element of the language documentation:
+   keywords, reserved words, noise words, operators,
+   delimiters, brackets, comments, and statements.
+*/
+
+// ---------- Class blueprint ----------
+class Player {
+    string name;
+    int hp = 100;
+    float speed = 2.5;
+    bool alive = true;
+
+    func void heal(int amount) {
+        hp = hp + amount;
+    }
+}
+
+// ---------- Cached pure function ----------
+cache void square(int n) {
+    print(n ^ 2);
+}
+
+func void main() {
+
+    // ---------- Declaration statements ----------
+    int count;
+    int a = 1, b = 2;
+    int x, y;
+    float avg = (a + b) / 3.0;
+    string title = "CLAMPZ Demo";
+    bool ready = false;
+    int offset = -7;
+    int player_level = 3;
+
+    // limit (full notation: lim + noise word "it")
+    limit(0, 100) int score = 50;
+    lim(0, 10) int lives = 3;
+
+    // persist (full notation: per + noise word "sist")
+    persist int high_score = 0;
+    per int coins = 25;
+
+    // ---------- Input / Output ----------
+    print("Enter age: ");
+    count = read(console);
+    print(count);
+    print("Title: " + title);
+
+    // ---------- Arithmetic operators ----------
+    x = a + b;
+    y = a - b;
+    x = a * b;
+    y = b / a;
+    x = b % a;
+    y = a ^ b;
+    x = (b + 3) * a / 24;
+
+    // ---------- Unary operators ----------
+    x = -y;
+    x++;
+    ++x;
+    y--;
+    --y;
+
+    // ---------- Object lifecycle ----------
+    create Player hero;
+    create Player enemy;
+    hero.name = "Clampz";
+    hero.heal(10);
+
+    // watch fires whenever the variable changes
+    watch(score) {
+        print("Score changed: " + score);
+    }
+
+    // snapshot (full notation: snap + noise word "shot")
+    snapshot score checkpoint1;
+    snap lives checkpoint2;
+
+    score = 80;
+    undo score;
+
+    swap(a, b);
+    swap(hero, enemy);
+
+    // ---------- Relational and logical operators ----------
+    on (a == b) {
+        print("equal");
+    } on (a != b && a < b) {
+        print("a is smaller");
+    } on (a > b || a >= 10) {
+        print("a is bigger");
+    } on {
+        print("fallback");
+    }
+
+    // ---------- Nested conditional ----------
+    on (score >= 60) {
+        on (score <= 90) {
+            print("Passed");
+        } on {
+            print("Excellent");
+        }
+    } on {
+        ready = !ready;
+        print("Failed");
+    }
+
+    // ---------- Iterative statements: skip and stop ----------
+    for (int i = 0; i < 10; i++) {
+        on (i == 2) {
+            skip;
+        } on (i == 5) {
+            stop;
+        }
+        print(i);
+    }
+
+    // ---------- Nested for ----------
+    for (int r = 1; r <= 3; r++) {
+        for (int c = 1; c <= 2; c++) {
+            print(r + " x " + c + " = " + (r * c));
+        }
+    }
+
+    // ---------- Brackets ----------
+    int arr[3];
+    arr[0] = 4;
+    square(arr[0]);
+
+    // destroy (full notation: dest + noise word "roy")
+    destroy hero;
+    dest enemy;
+    destroy Player;
+    destroy;
+
+    print(true);
+    print("Done! @~");
+}

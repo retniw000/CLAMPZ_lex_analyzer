@@ -1,0 +1,115 @@
+CLAMPZ SYMBOL TABLE
+Source file: test.clampz
+----------------------------------------------------------------------------------------------------
+No.   Line   Lexeme                         Token            Category              Remarks
+----------------------------------------------------------------------------------------------------
+1     1      int                            INT              KEYWORD               
+2     1      total                          IDENTIFIER       IDENTIFIER            
+3     1      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+4     1      0                              INTEGER          CONSTANT              
+5     1      ;                              SEMICOLON        DELIMITER             
+6     3      for                            FOR              KEYWORD               
+7     3      (                              LEFT_PAREN       BRACKET               
+8     3      int                            INT              KEYWORD               
+9     3      i                              IDENTIFIER       IDENTIFIER            
+10    3      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+11    3      0                              INTEGER          CONSTANT              
+12    3      ;                              SEMICOLON        DELIMITER             
+13    3      i                              IDENTIFIER       IDENTIFIER            
+14    3      <                              LESS_THAN        RELATIONAL_OPERATOR   
+15    3      5                              INTEGER          CONSTANT              
+16    3      ;                              SEMICOLON        DELIMITER             
+17    3      i                              IDENTIFIER       IDENTIFIER            
+18    3      ++                             INCREMENT        ARITHMETIC_OPERATOR   
+19    3      )                              RIGHT_PAREN      BRACKET               
+20    3      {                              LEFT_BRACE       BRACKET               
+21    4      print                          PRINT            KEYWORD               
+22    4      (                              LEFT_PAREN       BRACKET               
+23    4      i                              IDENTIFIER       IDENTIFIER            
+24    4      )                              RIGHT_PAREN      BRACKET               
+25    4      ;                              SEMICOLON        DELIMITER             
+26    5      total                          IDENTIFIER       IDENTIFIER            
+27    5      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+28    5      total                          IDENTIFIER       IDENTIFIER            
+29    5      +                              PLUS             ARITHMETIC_OPERATOR   
+30    5      i                              IDENTIFIER       IDENTIFIER            
+31    5      ;                              SEMICOLON        DELIMITER             
+32    6      }                              RIGHT_BRACE      BRACKET               
+33    8      print                          PRINT            KEYWORD               
+34    8      (                              LEFT_PAREN       BRACKET               
+35    8      total                          IDENTIFIER       IDENTIFIER            
+36    8      )                              RIGHT_PAREN      BRACKET               
+37    8      ;                              SEMICOLON        DELIMITER             
+38    9      for                            FOR              KEYWORD               
+39    9      (                              LEFT_PAREN       BRACKET               
+40    9      int                            INT              KEYWORD               
+41    9      j                              IDENTIFIER       IDENTIFIER            
+42    9      =                              ASSIGN           ASSIGNMENT_OPERATOR   
+43    9      0                              INTEGER          CONSTANT              
+44    9      ;                              SEMICOLON        DELIMITER             
+45    9      j                              IDENTIFIER       IDENTIFIER            
+46    9      <                              LESS_THAN        RELATIONAL_OPERATOR   
+47    9      5                              INTEGER          CONSTANT              
+48    9      ;                              SEMICOLON        DELIMITER             
+49    9      j                              IDENTIFIER       IDENTIFIER            
+50    9      ++                             INCREMENT        ARITHMETIC_OPERATOR   
+51    9      )                              RIGHT_PAREN      BRACKET               
+52    9      {                              LEFT_BRACE       BRACKET               
+53    11     on                             ON               KEYWORD               
+54    11     (                              LEFT_PAREN       BRACKET               
+55    11     j                              IDENTIFIER       IDENTIFIER            
+56    11     ==                             EQUAL            RELATIONAL_OPERATOR   
+57    11     2                              INTEGER          CONSTANT              
+58    11     )                              RIGHT_PAREN      BRACKET               
+59    11     {                              LEFT_BRACE       BRACKET               
+60    12     skip                           SKIP             RESERVED_WORD         
+61    12     ;                              SEMICOLON        DELIMITER             
+62    13     }                              RIGHT_BRACE      BRACKET               
+63    15     print                          PRINT            KEYWORD               
+64    15     (                              LEFT_PAREN       BRACKET               
+65    15     j                              IDENTIFIER       IDENTIFIER            
+66    15     )                              RIGHT_PAREN      BRACKET               
+67    15     ;                              SEMICOLON        DELIMITER             
+68    16     }                              RIGHT_BRACE      BRACKET               
+69    18     for                            FOR              KEYWORD               
+70    18     (                              LEFT_PAREN       BRACKET               
+71    18     int                            INT              KEYWORD               
+72    18     k                              IDENTIFIER       IDENTIFIER            
+73    18     =                              ASSIGN           ASSIGNMENT_OPERATOR   
+74    18     0                              INTEGER          CONSTANT              
+75    18     ;                              SEMICOLON        DELIMITER             
+76    18     k                              IDENTIFIER       IDENTIFIER            
+77    18     <                              LESS_THAN        RELATIONAL_OPERATOR   
+78    18     10                             INTEGER          CONSTANT              
+79    18     ;                              SEMICOLON        DELIMITER             
+80    18     k                              IDENTIFIER       IDENTIFIER            
+81    18     ++                             INCREMENT        ARITHMETIC_OPERATOR   
+82    18     )                              RIGHT_PAREN      BRACKET               
+83    18     {                              LEFT_BRACE       BRACKET               
+84    20     on                             ON               KEYWORD               
+85    20     (                              LEFT_PAREN       BRACKET               
+86    20     k                              IDENTIFIER       IDENTIFIER            
+87    20     ==                             EQUAL            RELATIONAL_OPERATOR   
+88    20     5                              INTEGER          CONSTANT              
+89    20     )                              RIGHT_PAREN      BRACKET               
+90    20     {                              LEFT_BRACE       BRACKET               
+91    21     stop                           STOP             KEYWORD               
+92    21     ;                              SEMICOLON        DELIMITER             
+93    22     }                              RIGHT_BRACE      BRACKET               
+94    24     print                          PRINT            KEYWORD               
+95    24     (                              LEFT_PAREN       BRACKET               
+96    24     k                              IDENTIFIER       IDENTIFIER            
+97    24     )                              RIGHT_PAREN      BRACKET               
+98    24     ;                              SEMICOLON        DELIMITER             
+99    25     }                              RIGHT_BRACE      BRACKET               
+----------------------------------------------------------------------------------------------------
+Total tokens: 99
+  KEYWORD               14
+  RESERVED_WORD         1
+  IDENTIFIER            19
+  CONSTANT              9
+  ARITHMETIC_OPERATOR   4
+  ASSIGNMENT_OPERATOR   5
+  RELATIONAL_OPERATOR   5
+  DELIMITER             14
+  BRACKET               28
