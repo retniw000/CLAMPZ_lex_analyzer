@@ -1,11 +1,10 @@
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.List;
 import lexer.Lexer;
 import lexer.SymbolTable;
 import lexer.Token;
 import lexer.TokenType;
-
-import java.io.IOException;
-import java.nio.file.Path;
-import java.util.List;
 
 // Runs only the lexical analysis stage of CLAMPZ
 public class Main {

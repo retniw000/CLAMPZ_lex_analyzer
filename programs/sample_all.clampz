@@ -34,13 +34,15 @@ func void main() {
     int offset = -7;
     int player_level = 3;
 
-    // limit (full notation: lim + noise word "it")
+    // limit: full keyword, shorthand, and shorthand + separate noise word "it"
     limit(0, 100) int score = 50;
     lim(0, 10) int lives = 3;
+    lim it(0, 5) int stars = 1;
 
-    // persist (full notation: per + noise word "sist")
+    // persist: full keyword, shorthand, and shorthand + separate noise word "sist"
     persist int high_score = 0;
     per int coins = 25;
+    per sist int gems = 2;
 
     // ---------- Input / Output ----------
     print("Enter age: ");
@@ -75,9 +77,10 @@ func void main() {
         print("Score changed: " + score);
     }
 
-    // snapshot (full notation: snap + noise word "shot")
+    // snapshot: full keyword, shorthand, and shorthand + separate noise word "shot"
     snapshot score checkpoint1;
     snap lives checkpoint2;
+    snap shot coins checkpoint3;
 
     score = 80;
     undo score;
@@ -130,9 +133,10 @@ func void main() {
     arr[0] = 4;
     square(arr[0]);
 
-    // destroy (full notation: dest + noise word "roy")
+    // destroy: full keyword, shorthand, and shorthand + separate noise word "roy"
     destroy hero;
     dest enemy;
+    dest roy boss;
     destroy Player;
     destroy;
 

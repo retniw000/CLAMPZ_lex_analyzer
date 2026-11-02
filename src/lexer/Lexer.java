@@ -1,8 +1,10 @@
 package lexer;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class Lexer {
 
@@ -49,12 +51,27 @@ public class Lexer {
         Map.entry("dest", TokenType.DESTROY)
     );
 
-    // Full notation -> shorthand; the rest of the word is the noise word
-    private static final Map<String, String> noiseForms = Map.of(
-        "persist", "per",
-        "limit", "lim",
-        "snapshot", "snap",
-        "destroy", "dest"
+    // Shorthand -> the noise word that may follow it as a separate lexeme: "lim it"
+    private static final Map<String, String> noiseWords = Map.of(
+        "per", "sist",
+        "lim", "it",
+        "snap", "shot",
+        "dest", "roy"
+    );
+
+    // Tokens that end an operand; a '-' after one of these is subtraction, not a sign
+    private static final Set<TokenType> operandEnds = EnumSet.of(
+        TokenType.IDENTIFIER,
+        TokenType.INTEGER,
+        TokenType.FLOAT_LITERAL,
+        TokenType.STRING_LITERAL,
+        TokenType.CHAR_LITERAL,
+        TokenType.TRUE,
+        TokenType.FALSE,
+        TokenType.RIGHT_PAREN,
+        TokenType.RIGHT_BRACKET,
+        TokenType.INCREMENT,
+        TokenType.DECREMENT
     );
 
     public Lexer(String source) {
@@ -102,6 +119,10 @@ public class Lexer {
             case '-':
                 if (match('-')) {
                     addToken(TokenType.DECREMENT);
+                } else if (isDigit(peek()) && !followsOperand()) {
+                    // Integer rule: Digits | - Digits, e.g. x = -7
+                    advance();
+                    number();
                 } else {
                     addToken(TokenType.MINUS);
                 }
@@ -197,15 +218,14 @@ public class Lexer {
 
         String text = source.substring(start, current);
 
-        // Full notation such as "persist" is the keyword "per" followed by the noise word "sist"
-        String shorthand = noiseForms.get(text);
-        if (shorthand != null) {
-            tokens.add(new Token(keywords.get(text), shorthand, startLine));
-            tokens.add(new Token(TokenType.NOISE_WORD,
-                text.substring(shorthand.length()), startLine));
+        // A noise word written apart from its shorthand: "lim it", "per sist"
+        Token previous = previousToken();
+        if (previous != null && text.equals(noiseWords.get(previous.lexeme))) {
+            addToken(TokenType.NOISE_WORD);
             return;
         }
 
+        // Maximal munch: the whole word is looked up, so "limit" is one LIMIT token
         TokenType type = keywords.getOrDefault(
             text, TokenType.IDENTIFIER
         );
@@ -305,6 +325,21 @@ public class Lexer {
         }
 
         invalid("Unterminated block comment.");
+    }
+
+    // Last token the parser will see, skipping comments and noise words
+    private Token previousToken() {
+        for (int i = tokens.size() - 1; i >= 0; i--) {
+            if (!tokens.get(i).type.isIgnoredByParser()) {
+                return tokens.get(i);
+            }
+        }
+        return null;
+    }
+
+    private boolean followsOperand() {
+        Token previous = previousToken();
+        return previous != null && operandEnds.contains(previous.type);
     }
 
     private void consumeWordRest() {
