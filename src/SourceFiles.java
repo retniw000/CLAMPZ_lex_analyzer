@@ -8,10 +8,17 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-// Reading and writing .clampz files, with error messages that say exactly what went wrong
+// Reading and writing .clampz / .clz files, with error messages that say exactly what went wrong
 public final class SourceFiles {
 
+    // Default extension, used when saving a program without one
     public static final String EXTENSION = ".clampz";
+
+    // Every extension the lexical analyzer accepts
+    public static final String[] EXTENSIONS = {".clampz", ".clz"};
+
+    public static final String INVALID_TYPE_MESSAGE =
+        "Invalid file type. Only .clampz or .clz files are allowed.";
 
     // Larger files are almost certainly not hand-written programs
     private static final long MAX_SIZE = 5L * 1024 * 1024;
@@ -19,8 +26,16 @@ public final class SourceFiles {
     private SourceFiles() { }
 
     public static boolean hasClampzExtension(Path path) {
-        return path.getFileName() != null
-            && path.getFileName().toString().toLowerCase().endsWith(EXTENSION);
+        if (path.getFileName() == null) {
+            return false;
+        }
+        String fileName = path.getFileName().toString().toLowerCase();
+        for (String extension : EXTENSIONS) {
+            if (fileName.endsWith(extension)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Path toPath(String text) throws IOException {
@@ -35,10 +50,9 @@ public final class SourceFiles {
         if (Files.isDirectory(path)) {
             throw new IOException("'" + path + "' is a folder, not a file.");
         }
-        // The lexical analyzer only reads CLAMPZ source files
+        // The lexical analyzer only reads CLAMPZ source files; checked before anything is read
         if (!hasClampzExtension(path)) {
-            throw new IOException("'" + path.getFileName() + "' is not a CLAMPZ source file. "
-                + "Only " + EXTENSION + " files can be read.");
+            throw new IOException(INVALID_TYPE_MESSAGE);
         }
         try {
             if (Files.size(path) > MAX_SIZE) {

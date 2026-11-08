@@ -6,10 +6,10 @@ import lexer.SymbolTable;
 import lexer.Token;
 import lexer.TokenType;
 
-// Runs only the lexical analysis stage of CLAMPZ
+// Just does the lexer part of CLAMPZ
 public class Main {
 
-    // Exit codes so scripts can tell failures apart
+    // Exit codes so scripts can tell what went wrong
     private static final int EXIT_USAGE = 64;
     private static final int EXIT_DATA_ERROR = 65;
     private static final int EXIT_FILE_ERROR = 66;
@@ -17,14 +17,14 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // No file given: open the graphical editor instead
+        // No file? Just open the editor
         if (args.length == 0) {
             ClampzIDE.launch();
             return;
         }
 
         if (args.length > 2) {
-            System.err.println("Usage: java Main [program.clampz [tokens.txt]]");
+            System.err.println("Usage: java Main [program.clampz|program.clz [tokens.txt]]");
             System.exit(EXIT_USAGE);
         }
 
@@ -49,7 +49,7 @@ public class Main {
             System.out.println("====================");
 
             try {
-                // An optional second argument picks where the tokens are saved
+                // Optional second arg sets where the tokens get saved
                 String name = path.getFileName().toString();
                 Path written = args.length == 2
                     ? SymbolTable.writeTo(SourceFiles.toPath(args[1]), name, tokens)
@@ -76,7 +76,7 @@ public class Main {
             System.out.println("Tokens: " + tokens.size());
 
         } catch (RuntimeException e) {
-            // Lexer errors already carry a "[Lexer Error] Line N:" prefix
+            // Lexer errors already include the "[Lexer Error] Line N:" bit
             System.err.println(e.getMessage() != null ? e.getMessage()
                 : "[Internal Error] " + e.getClass().getName());
             System.exit(EXIT_PROGRAM_ERROR);

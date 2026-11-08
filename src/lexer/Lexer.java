@@ -26,23 +26,23 @@ public class Lexer {
         Map.entry("cache", TokenType.CACHE),
         Map.entry("class", TokenType.CLASS),
         Map.entry("func", TokenType.FUNC),
-        Map.entry("snapshot", TokenType.SNAPSHOT),
         Map.entry("print", TokenType.PRINT),
         Map.entry("read", TokenType.READ),
         Map.entry("for", TokenType.FOR),
         Map.entry("undo", TokenType.UNDO),
         Map.entry("on", TokenType.ON),
-        Map.entry("destroy", TokenType.DESTROY),
         Map.entry("create", TokenType.CREATE),
         Map.entry("watch", TokenType.WATCH),
-        Map.entry("persist", TokenType.PERSIST),
         Map.entry("swap", TokenType.SWAP),
-        Map.entry("limit", TokenType.LIMIT),
         Map.entry("stop", TokenType.STOP),
+
+        // Reserved words
         Map.entry("main", TokenType.MAIN),
-        Map.entry("true", TokenType.TRUE),
-        Map.entry("false", TokenType.FALSE),
         Map.entry("skip", TokenType.SKIP),
+
+        // Reserved words that are counted as constants
+        Map.entry("true", TokenType.BOOL_LITERAL),
+        Map.entry("false", TokenType.BOOL_LITERAL),
 
         // Shorthand forms of keywords that have a noise word
         Map.entry("per", TokenType.PERSIST),
@@ -51,12 +51,13 @@ public class Lexer {
         Map.entry("dest", TokenType.DESTROY)
     );
 
-    // Shorthand -> the noise word that may follow it as a separate lexeme: "lim it"
-    private static final Map<String, String> noiseWords = Map.of(
-        "per", "sist",
-        "lim", "it",
-        "snap", "shot",
-        "dest", "roy"
+    // Full form -> {shorthand keyword, noise word, token}
+    // "persist" is written to the symbol table as "per" (PERSIST) + "sist" (NOISE_WORD)
+    private static final Map<String, String[]> fullForms = Map.of(
+        "persist",  new String[] {"per",  "sist", "PERSIST"},
+        "limit",    new String[] {"lim",  "it",   "LIMIT"},
+        "snapshot", new String[] {"snap", "shot", "SNAPSHOT"},
+        "destroy",  new String[] {"dest", "roy",  "DESTROY"}
     );
 
     // Tokens that end an operand; a '-' after one of these is subtraction, not a sign
@@ -66,8 +67,7 @@ public class Lexer {
         TokenType.FLOAT_LITERAL,
         TokenType.STRING_LITERAL,
         TokenType.CHAR_LITERAL,
-        TokenType.TRUE,
-        TokenType.FALSE,
+        TokenType.BOOL_LITERAL,
         TokenType.RIGHT_PAREN,
         TokenType.RIGHT_BRACKET,
         TokenType.INCREMENT,
@@ -137,7 +137,7 @@ public class Lexer {
                     while (peek() != '\n' && !isAtEnd()) {
                         advance();
                     }
-                    addToken(TokenType.COMMENT);
+                    addToken(TokenType.SINGLE_LINE_COMMENT);
                 } else if (match('*')) {
                     blockComment();
                 } else {
@@ -218,19 +218,48 @@ public class Lexer {
 
         String text = source.substring(start, current);
 
-        // A noise word written apart from its shorthand: "lim it", "per sist"
-        Token previous = previousToken();
-        if (previous != null && text.equals(noiseWords.get(previous.lexeme))) {
-            addToken(TokenType.NOISE_WORD);
+        // A noise word written apart from its shorthand: "lim it", "per sist".
+        // Only the token right before it counts (comments skipped), so "limit it"
+        // does not turn the second "it" into a noise word as well.
+        Token previous = lastTokenSkippingComments();
+        if (previous != null && previous.type.category == TokenType.Category.KEYWORD) {
+            String fullForm = fullFormOf(previous.lexeme);
+            if (fullForm != null && text.equals(fullForms.get(fullForm)[1])) {
+                addToken(TokenType.NOISE_WORD, "Optional noise word of '" + fullForm + "'");
+                return;
+            }
+        }
+
+        // Maximal munch: the whole word is looked up, so "persistence" stays one IDENTIFIER
+        String[] parts = fullForms.get(text);
+        if (parts != null) {
+            // Full form = shorthand keyword + noise word, both on the same line
+            tokens.add(new Token(TokenType.valueOf(parts[2]), parts[0], startLine,
+                null, "Shorthand of '" + text + "'"));
+            tokens.add(new Token(TokenType.NOISE_WORD, parts[1], startLine,
+                null, "Optional noise word of '" + text + "'"));
             return;
         }
 
-        // Maximal munch: the whole word is looked up, so "limit" is one LIMIT token
         TokenType type = keywords.getOrDefault(
             text, TokenType.IDENTIFIER
         );
 
-        addToken(type);
+        if (type == TokenType.BOOL_LITERAL) {
+            addToken(type, "Boolean constant (reserved word)");
+        } else {
+            addToken(type);
+        }
+    }
+
+    // Full form whose shorthand is the given lexeme ("per" -> "persist"), or null
+    private static String fullFormOf(String shorthand) {
+        for (Map.Entry<String, String[]> entry : fullForms.entrySet()) {
+            if (entry.getValue()[0].equals(shorthand)) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 
     private void number() {
@@ -313,7 +342,8 @@ public class Lexer {
             if (peek() == '*' && peekNext() == '/') {
                 advance();
                 advance();
-                addToken(TokenType.COMMENT);
+                addToken(TokenType.MULTI_LINE_COMMENT,
+                    startLine == line ? "Line " + line : "Lines " + startLine + "-" + line);
                 return;
             }
 
@@ -331,6 +361,16 @@ public class Lexer {
     private Token previousToken() {
         for (int i = tokens.size() - 1; i >= 0; i--) {
             if (!tokens.get(i).type.isIgnoredByParser()) {
+                return tokens.get(i);
+            }
+        }
+        return null;
+    }
+
+    // Last token of any kind except comments (noise words included)
+    private Token lastTokenSkippingComments() {
+        for (int i = tokens.size() - 1; i >= 0; i--) {
+            if (tokens.get(i).type.category != TokenType.Category.COMMENT) {
                 return tokens.get(i);
             }
         }
@@ -393,10 +433,14 @@ public class Lexer {
     }
 
     private void addToken(TokenType type) {
+        addToken(type, null);
+    }
+
+    private void addToken(TokenType type, String remarks) {
 
         String text = source.substring(start, current);
 
-        tokens.add(new Token(type, text, startLine));
+        tokens.add(new Token(type, text, startLine, null, remarks));
     }
 
     // Record the current lexeme as an invalid token instead of dropping it

@@ -29,8 +29,6 @@ public enum TokenType {
 
     // Reserved words
     MAIN(Category.RESERVED_WORD),
-    TRUE(Category.RESERVED_WORD),
-    FALSE(Category.RESERVED_WORD),
     SKIP(Category.RESERVED_WORD),
 
     // Optional suffix of a shorthand keyword: per+sist, lim+it, snap+shot, dest+roy
@@ -42,6 +40,8 @@ public enum TokenType {
     INTEGER(Category.CONSTANT),
     FLOAT_LITERAL(Category.CONSTANT),
     STRING_LITERAL(Category.CONSTANT),
+    // "true" and "false" are reserved words, but they are counted as constants
+    BOOL_LITERAL(Category.CONSTANT),
     CHAR_LITERAL(Category.CONSTANT),
 
     // Arithmetic operators
@@ -83,7 +83,9 @@ public enum TokenType {
     LEFT_BRACKET(Category.BRACKET),
     RIGHT_BRACKET(Category.BRACKET),
 
-    COMMENT(Category.COMMENT),
+    // Comments: // ... and /* ... */
+    SINGLE_LINE_COMMENT(Category.COMMENT),
+    MULTI_LINE_COMMENT(Category.COMMENT),
 
     // A lexeme that matches no rule of the language
     INVALID(Category.INVALID),

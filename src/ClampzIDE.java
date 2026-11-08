@@ -269,7 +269,7 @@ public class ClampzIDE extends JFrame {
         left.add(new VerticalRule());
         left.add(Box.createHorizontalStrut(4));
         left.add(menu("New", "Start a new program (Ctrl+N)", this::newFile));
-        left.add(menu("Open", "Open a .clampz file (Ctrl+O), or drop one onto the window", this::chooseAndOpen));
+        left.add(menu("Open", "Open a .clampz or .clz file (Ctrl+O), or drop one onto the window", this::chooseAndOpen));
         left.add(menu("Save", "Save (Ctrl+S)", () -> save(false)));
         left.add(menu("Example", "Load a short example program", () -> {
             if (confirmDiscard()) {
@@ -967,12 +967,12 @@ public class ClampzIDE extends JFrame {
         Path path = ((File) files.get(0)).toPath();
         if (Files.isDirectory(path)) {
             showError("'" + path.getFileName() + "' is a folder.\nDrop a single "
-                + SourceFiles.EXTENSION + " file to open it.");
+                + ".clampz or .clz file to open it.");
             return;
         }
         if (!SourceFiles.hasClampzExtension(path)) {
-            showError("'" + path.getFileName() + "' is not a CLAMPZ source file.\nOnly "
-                + SourceFiles.EXTENSION + " files can be read.");
+            setStatus("Could not open " + path.getFileName(), StatusKind.ERROR);
+            showError(SourceFiles.INVALID_TYPE_MESSAGE);
             return;
         }
         if (!confirmDiscard()) {
@@ -1024,7 +1024,7 @@ public class ClampzIDE extends JFrame {
         }
         Path dir = currentFile != null ? currentFile.toAbsolutePath().getParent() : Path.of("");
         String base = currentFile != null
-            ? currentFile.getFileName().toString().replaceFirst("(?i)\\.clampz$", "") + "_tokens.txt"
+            ? currentFile.getFileName().toString().replaceFirst("(?i)\\.(clampz|clz)$", "") + "_tokens.txt"
             : SymbolTable.FILE_NAME;
         JFileChooser chooser = new JFileChooser(Files.isDirectory(dir) ? dir.toFile() : null);
         chooser.setFileFilter(new FileNameExtensionFilter("Text files (*.txt)", "txt"));
@@ -1053,7 +1053,8 @@ public class ClampzIDE extends JFrame {
     private JFileChooser fileChooser() {
         Path dir = currentFile != null ? currentFile.toAbsolutePath().getParent() : Path.of("programs");
         JFileChooser chooser = new JFileChooser(Files.isDirectory(dir) ? dir.toFile() : null);
-        chooser.setFileFilter(new FileNameExtensionFilter("CLAMPZ programs (*.clampz)", "clampz"));
+        // The filter can be bypassed with "All Files", so SourceFiles.read() still checks the extension
+        chooser.setFileFilter(new FileNameExtensionFilter("CLAMPZ files", "clampz", "clz"));
         return chooser;
     }
 

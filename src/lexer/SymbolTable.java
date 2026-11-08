@@ -13,29 +13,41 @@ public final class SymbolTable {
 
     public static final String FILE_NAME = "SymbolTable.txt";
 
+    // Longest lexeme shown in full; longer ones are cut to 27 characters + "..."
+    private static final int MAX_LEXEME = 30;
+
+    // Fixed column widths: No. | Line | Lexeme | Token | Category | Remarks
+    private static final String ROW = "%-6s%-7s%-31s%-21s%-22s%s%n";
+
     private SymbolTable() { }
 
     public static String format(String sourceName, List<Token> tokens) {
         StringBuilder out = new StringBuilder();
-        String rule = "-".repeat(100) + "\n";
+        String rule = "-".repeat(110) + "\n";
 
         out.append("CLAMPZ SYMBOL TABLE\n");
         out.append("Source file: ").append(sourceName).append("\n");
         out.append(rule);
-        out.append(String.format("%-5s %-6s %-30s %-16s %-21s %s%n",
-            "No.", "Line", "Lexeme", "Token", "Category", "Remarks"));
+        out.append(String.format(ROW, "No.", "Line", "Lexeme", "Token", "Category", "Remarks"));
         out.append(rule);
 
+        // Every category starts at 0 so all of them (NOISE_WORD included) appear in the totals
         Map<TokenType.Category, Integer> counts = new EnumMap<>(TokenType.Category.class);
+        for (TokenType.Category category : TokenType.Category.values()) {
+            if (category != TokenType.Category.END) {
+                counts.put(category, 0);
+            }
+        }
+
         int number = 0;
         for (Token token : tokens) {
             if (token.type == TokenType.EOF) {
                 continue;
             }
             counts.merge(token.type.category, 1, Integer::sum);
-            out.append(String.format("%-5d %-6d %-30s %-16s %-21s %s%n",
+            out.append(String.format(ROW,
                 ++number, token.line, display(token.lexeme), token.type,
-                token.type.category, token.error != null ? token.error : ""));
+                token.type.category, remarks(token)));
         }
 
         out.append(rule);
@@ -56,8 +68,21 @@ public final class SymbolTable {
         return file;
     }
 
-    // Keep multi-line comments and strings on one row of the table
+    // Keep multi-line comments and strings on one row of the table:
+    // line breaks and tabs become spaces, and long lexemes are shortened
     private static String display(String lexeme) {
-        return lexeme.replace("\r", "").replace("\n", "\\n").replace("\t", "\\t");
+        String flat = lexeme.replace("\r\n", " ").replace('\r', ' ')
+            .replace('\n', ' ').replace('\t', ' ');
+        if (flat.length() > MAX_LEXEME) {
+            flat = flat.substring(0, MAX_LEXEME - 3) + "...";
+        }
+        return flat;
+    }
+
+    private static String remarks(Token token) {
+        if (token.error != null) {
+            return token.error;
+        }
+        return token.remarks != null ? token.remarks : "";
     }
 }
