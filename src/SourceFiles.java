@@ -8,13 +8,10 @@ import java.nio.file.InvalidPathException;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 
-// Reading and writing .clampz / .clz files, with error messages that say exactly what went wrong
 public final class SourceFiles {
 
-    // Default extension, used when saving a program without one
     public static final String EXTENSION = ".clampz";
 
-    // Every extension the lexical analyzer accepts
     public static final String[] EXTENSIONS = {".clampz", ".clz"};
 
     public static final String INVALID_TYPE_MESSAGE =
@@ -50,7 +47,6 @@ public final class SourceFiles {
         if (Files.isDirectory(path)) {
             throw new IOException("'" + path + "' is a folder, not a file.");
         }
-        // The lexical analyzer only reads CLAMPZ source files; checked before anything is read
         if (!hasClampzExtension(path)) {
             throw new IOException(INVALID_TYPE_MESSAGE);
         }
@@ -82,7 +78,6 @@ public final class SourceFiles {
         }
     }
 
-    // Turn a low-level I/O failure into a sentence a user can act on
     private static String describe(String action, Path path, IOException e) {
         String name = path.toAbsolutePath().toString();
         if (e instanceof NoSuchFileException) {
@@ -98,7 +93,6 @@ public final class SourceFiles {
             return "Cannot open " + name + ": the file is not valid UTF-8 text.";
         }
         if (e instanceof FileSystemException fse && fse.getReason() != null) {
-            // e.g. the file is locked by another program
             return "Cannot " + action + " " + name + ": " + fse.getReason();
         }
         if (e.getMessage() != null && e.getCause() == null && e.getClass() == IOException.class) {

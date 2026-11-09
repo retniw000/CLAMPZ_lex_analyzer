@@ -40,10 +40,7 @@ import java.util.prefs.Preferences;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-// Simple desktop editor for running the CLAMPZ lexer on a program
 public class ClampzIDE extends JFrame {
-
-    // ---------- Themes ----------
 
     private record Theme(
         boolean dark,
@@ -54,7 +51,6 @@ public class ClampzIDE extends JFrame {
         Color type, Color keyword, Color literal, Color string, Color comment
     ) { }
 
-    // Light is warm paper and ink; dark is the same palette after sundown
     private static final Theme LIGHT = new Theme(false,
         hex(0xE8E4DA), hex(0xFBF9F4), hex(0xF2EFE7), hex(0xD4CEC0),
         hex(0x26231E), hex(0x7C7568), hex(0xB8432A), hex(0xFFF8F0),
@@ -84,13 +80,10 @@ public class ClampzIDE extends JFrame {
 
     private Theme theme = PREFS.getBoolean("darkMode", false) ? DARK : LIGHT;
 
-    // ---------- Fonts and constants ----------
-
     private static final Font CODE_FONT = new Font(
         firstInstalled("JetBrains Mono", "Cascadia Code", "Consolas", Font.MONOSPACED), Font.PLAIN, 15);
     private static final Font UI_FONT = new Font(
         firstInstalled("Segoe UI", "Inter", Font.DIALOG), Font.PLAIN, 13);
-    // Small spaced-out capitals for tabs and column headings
     private static final Font LABEL_FONT = UI_FONT.deriveFont(Font.BOLD, 11f)
         .deriveFont(Map.of(TextAttribute.TRACKING, 0.08f));
 
@@ -125,16 +118,12 @@ public class ClampzIDE extends JFrame {
 
     private record OutLine(String text, OutKind kind) { }
 
-    // ---------- Components ----------
-
     private final JTextPane editor = new JTextPane() {
-        // Disable line wrapping so long lines scroll horizontally
         @Override
         public boolean getScrollableTracksViewportWidth() {
             return getUI().getPreferredSize(this).width <= getParent().getSize().width;
         }
 
-        // Paint the background ourselves so the caret's line can be highlighted
         @Override
         protected void paintComponent(Graphics g) {
             g.setColor(theme.surface());
@@ -172,7 +161,6 @@ public class ClampzIDE extends JFrame {
     private final JLabel fileLabel = themedLabel("", Theme::text);
     private final JLabel pathLabel = themedLabel("", Theme::muted);
     private final JLabel modeTag = new JLabel() {
-        // Inverted block naming the editor's state, like a vim mode line
         @Override
         public Color getBackground() {
             return theme == null ? super.getBackground() : statusColor(theme);
@@ -254,8 +242,6 @@ public class ClampzIDE extends JFrame {
         setStatus("Ctrl+Enter or F5 runs the lexer.", StatusKind.MUTED);
     }
 
-    // ---------- Layout ----------
-
     private JComponent buildHeader() {
         JPanel header = themedPanel(new BorderLayout(), Theme::bg);
         header.setBorder(BorderFactory.createCompoundBorder(
@@ -305,7 +291,6 @@ public class ClampzIDE extends JFrame {
         JScrollPane editorScroll = scroll(editor, Theme::surface);
         editorScroll.setRowHeaderView(gutter);
 
-        // Strip above the editor naming the open file and its folder
         JPanel fileStrip = row(Theme::surfaceAlt);
         fileStrip.setBorder(BorderFactory.createCompoundBorder(
             new SideBorder(false, true), BorderFactory.createEmptyBorder(5, 14, 5, 14)));
@@ -333,7 +318,6 @@ public class ClampzIDE extends JFrame {
         tokenTable.getTableHeader().setDefaultRenderer(new HeaderRenderer());
         tokenTable.setDefaultRenderer(Object.class, new CellRenderer());
         tokenTable.addMouseListener(new MouseAdapter() {
-            // Double-click a token to jump to its line
             @Override
             public void mouseClicked(MouseEvent e) {
                 int row = tokenTable.getSelectedRow();
@@ -426,8 +410,6 @@ public class ClampzIDE extends JFrame {
         tokensTab.repaint();
     }
 
-    // ---------- Theme switching ----------
-
     private void toggleTheme() {
         theme = theme.dark() ? LIGHT : DARK;
         PREFS.putBoolean("darkMode", theme.dark());
@@ -467,8 +449,6 @@ public class ClampzIDE extends JFrame {
         getContentPane().repaint();
     }
 
-    // ---------- Editor behaviour ----------
-
     private void setupEditor() {
         editor.getDocument().addDocumentListener(new DocumentListener() {
             @Override
@@ -497,7 +477,6 @@ public class ClampzIDE extends JFrame {
             gutter.repaint();
         });
 
-        // Tab inserts four spaces; Enter keeps the current indentation
         editor.getInputMap().put(KeyStroke.getKeyStroke("TAB"), "indent");
         editor.getActionMap().put("indent", new AbstractAction() {
             @Override
@@ -570,8 +549,6 @@ public class ClampzIDE extends JFrame {
         editor.getActionMap().put(name, wrapped);
     }
 
-    // ---------- Syntax highlighting ----------
-
     private static final Pattern TYPES = Pattern.compile("\\b(int|float|bool|string|void)\\b");
     private static final Pattern KEYWORDS = Pattern.compile(
         "\\b(print|read|for|on|stop|skip|cache|class|func|snapshot|undo|destroy|" +
@@ -611,9 +588,6 @@ public class ClampzIDE extends JFrame {
         }
     }
 
-    // ---------- Running the lexer ----------
-
-    // Thrown from the output stream when the user presses Stop
     private static class StopRequested extends RuntimeException { }
 
     private void run() {
@@ -631,7 +605,6 @@ public class ClampzIDE extends JFrame {
         stopRequested = false;
         setStatus("Analyzing…", StatusKind.BUSY);
 
-        // The symbol table goes next to the program, or the working folder for an unsaved one
         Path file = currentFile;
         Path folder = file != null ? file.toAbsolutePath().getParent() : Path.of("").toAbsolutePath();
         String sourceName = file != null ? file.getFileName().toString() : "(unsaved program)";
@@ -743,7 +716,6 @@ public class ClampzIDE extends JFrame {
         });
     }
 
-    // Splits written bytes into lines and hands each one to a consumer
     private class LineStream extends OutputStream {
         private final Consumer<String> sink;
         private final ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -766,8 +738,6 @@ public class ClampzIDE extends JFrame {
             }
         }
     }
-
-    // ---------- Output panel ----------
 
     private void append(String text, OutKind kind) {
         OutLine line = new OutLine(text, kind);
@@ -792,7 +762,6 @@ public class ClampzIDE extends JFrame {
         }
     }
 
-    // Redraw every output line using the current theme's colours
     private void renderOutput() {
         output.setText("");
         for (OutLine line : outputLines) {
@@ -804,8 +773,6 @@ public class ClampzIDE extends JFrame {
         outputLines.clear();
         output.setText("");
     }
-
-    // ---------- Error line marking ----------
 
     private static final Pattern LINE_NUMBER = Pattern.compile("[Ll]ine (\\d+)");
 
@@ -858,8 +825,6 @@ public class ClampzIDE extends JFrame {
         }
     }
 
-    // ---------- Files ----------
-
     private void newFile() {
         if (confirmDiscard()) {
             setEditorText("");
@@ -893,8 +858,6 @@ public class ClampzIDE extends JFrame {
             showError(e.getMessage());
         }
     }
-
-    // ---------- Drag and drop ----------
 
     // Accept files dropped anywhere on the window; text drag/paste keeps working in the panes
     private void setupFileDrop() {
@@ -1016,7 +979,6 @@ public class ClampzIDE extends JFrame {
         updateTokenTab();
     }
 
-    // Save the token table from the last analysis as a plain-text symbol table
     private void saveTokens() {
         if (lastTokens == null) {
             setStatus("Nothing to save yet — press Analyze first.", StatusKind.ERROR);
@@ -1058,7 +1020,6 @@ public class ClampzIDE extends JFrame {
         return chooser;
     }
 
-    // Ask before throwing away unsaved changes
     private boolean confirmDiscard() {
         if (!dirty) {
             return true;
@@ -1072,8 +1033,6 @@ public class ClampzIDE extends JFrame {
         return choice == JOptionPane.NO_OPTION;
     }
 
-    // ---------- Helpers ----------
-
     private void setEditorText(String text) {
         editor.setText(text.replace("\r\n", "\n"));
         editor.setCaretPosition(0);
@@ -1086,7 +1045,6 @@ public class ClampzIDE extends JFrame {
         fileLabel.setText(displayName() + (dirty ? " *" : ""));
         Path folder = currentFile != null ? currentFile.toAbsolutePath().getParent() : null;
         Path cwd = Path.of("").toAbsolutePath();
-        // Show folders inside the working directory relative to it, so the strip stays short
         pathLabel.setText(folder == null ? "not saved"
             : folder.startsWith(cwd) ? "./" + cwd.relativize(folder).toString().replace('\\', '/')
             : folder.toString());
@@ -1134,9 +1092,6 @@ public class ClampzIDE extends JFrame {
         return g2;
     }
 
-    // ---------- Themed building blocks ----------
-
-    // A panel whose background follows the current theme
     private JPanel themedPanel(LayoutManager layout, Function<Theme, Color> background) {
         return new JPanel(layout) {
             @Override
@@ -1146,14 +1101,12 @@ public class ClampzIDE extends JFrame {
         };
     }
 
-    // A horizontal row of components with a themed background
     private JPanel row(Function<Theme, Color> background) {
         JPanel panel = themedPanel(null, background);
         panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
         return panel;
     }
 
-    // A label whose text colour follows the current theme
     private JLabel themedLabel(String text, Function<Theme, Color> foreground) {
         return new JLabel(text) {
             @Override
@@ -1185,7 +1138,6 @@ public class ClampzIDE extends JFrame {
         return pane;
     }
 
-    // A 1px themed line on the top and/or bottom edge
     private class SideBorder extends AbstractBorder {
         private final boolean top;
         private final boolean bottom;
@@ -1210,7 +1162,6 @@ public class ClampzIDE extends JFrame {
 
     private enum Kind { MENU, PRIMARY, TAB }
 
-    // Flat square-cornered button painted by hand so it matches both themes
     private class FlatButton extends JButton {
         private static final int HINT_GAP = 12;
 
@@ -1316,7 +1267,6 @@ public class ClampzIDE extends JFrame {
         }
     }
 
-    // Thin upright line separating groups in the header
     private class VerticalRule extends JComponent {
         @Override
         public Dimension getPreferredSize() {
@@ -1335,9 +1285,6 @@ public class ClampzIDE extends JFrame {
         }
     }
 
-    // ---------- Scrollbars and table ----------
-
-    // Slim scrollbar without arrow buttons
     private class ThinScrollBarUI extends BasicScrollBarUI {
         @Override
         protected JButton createDecreaseButton(int orientation) {
@@ -1396,7 +1343,6 @@ public class ClampzIDE extends JFrame {
                 JTable table, Object value, boolean selected, boolean focused, int row, int col) {
             super.getTableCellRendererComponent(table, value, selected, false, row, col);
             setBorder(BorderFactory.createEmptyBorder(0, 12, 0, 12));
-            // Faint banding every other row keeps long tables readable without grid lines
             setBackground(selected ? theme.selection()
                 : row % 2 == 1 ? theme.surfaceAlt() : theme.surface());
             setHorizontalAlignment(col == 0 ? RIGHT : LEFT);
@@ -1410,7 +1356,6 @@ public class ClampzIDE extends JFrame {
         }
     }
 
-    // Draws line numbers beside the editor, marking the current and error lines
     private class LineGutter extends JComponent {
 
         LineGutter() {

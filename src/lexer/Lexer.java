@@ -36,7 +36,6 @@ public class Lexer {
         Map.entry("swap", TokenType.SWAP),
         Map.entry("stop", TokenType.STOP),
 
-        // Reserved words
         Map.entry("main", TokenType.MAIN),
         Map.entry("skip", TokenType.SKIP),
 
@@ -44,7 +43,6 @@ public class Lexer {
         Map.entry("true", TokenType.BOOL_LITERAL),
         Map.entry("false", TokenType.BOOL_LITERAL),
 
-        // Shorthand forms of keywords that have a noise word
         Map.entry("per", TokenType.PERSIST),
         Map.entry("lim", TokenType.LIMIT),
         Map.entry("snap", TokenType.SNAPSHOT),
@@ -68,7 +66,7 @@ public class Lexer {
         TokenType.STRING_LITERAL,
         TokenType.CHAR_LITERAL,
         TokenType.BOOL_LITERAL,
-        TokenType.RIGHT_PAREN,
+        TokenType.RIGHT_PARENTHESIS,
         TokenType.RIGHT_BRACKET,
         TokenType.INCREMENT,
         TokenType.DECREMENT
@@ -97,9 +95,8 @@ public class Lexer {
 
         switch (c) {
 
-            // Single-character tokens
-            case '(': addToken(TokenType.LEFT_PAREN); break;
-            case ')': addToken(TokenType.RIGHT_PAREN); break;
+            case '(': addToken(TokenType.LEFT_PARENTHESIS); break;
+            case ')': addToken(TokenType.RIGHT_PARENTHESIS); break;
             case '{': addToken(TokenType.LEFT_BRACE); break;
             case '}': addToken(TokenType.RIGHT_BRACE); break;
             case '[': addToken(TokenType.LEFT_BRACKET); break;
@@ -195,7 +192,6 @@ public class Lexer {
                 break;
 
             case '_':
-                // Identifiers must start with a letter
                 consumeWordRest();
                 invalid("Identifiers must start with a letter.");
                 break;
@@ -252,7 +248,6 @@ public class Lexer {
         }
     }
 
-    // Full form whose shorthand is the given lexeme ("per" -> "persist"), or null
     private static String fullFormOf(String shorthand) {
         for (Map.Entry<String, String[]> entry : fullForms.entrySet()) {
             if (entry.getValue()[0].equals(shorthand)) {
@@ -281,7 +276,6 @@ public class Lexer {
             type = TokenType.FLOAT_LITERAL;
         }
 
-        // Lexemes like 12abc, 3.14.15 or 5. match no rule
         if (isAlpha(peek()) || peek() == '_' || peek() == '.') {
             while (isAlphaNumeric(peek()) || peek() == '_' || peek() == '.') {
                 advance();
@@ -314,7 +308,6 @@ public class Lexer {
         addToken(TokenType.STRING_LITERAL);
     }
 
-    // A character constant holds exactly one character: 'a'
     private void character() {
 
         if (peek() != '\'' && peek() != '\n' && !isAtEnd() && peekNext() == '\'') {
@@ -443,7 +436,6 @@ public class Lexer {
         tokens.add(new Token(type, text, startLine, null, remarks));
     }
 
-    // Record the current lexeme as an invalid token instead of dropping it
     private void invalid(String reason) {
         tokens.add(new Token(TokenType.INVALID,
             source.substring(start, current).stripTrailing(), startLine, reason));

@@ -6,10 +6,8 @@ import lexer.SymbolTable;
 import lexer.Token;
 import lexer.TokenType;
 
-// Just does the lexer part of CLAMPZ
 public class Main {
 
-    // Exit codes so scripts can tell what went wrong
     private static final int EXIT_USAGE = 64;
     private static final int EXIT_DATA_ERROR = 65;
     private static final int EXIT_FILE_ERROR = 66;
@@ -17,7 +15,6 @@ public class Main {
 
     public static void main(String[] args) {
 
-        // No file? Just open the editor
         if (args.length == 0) {
             ClampzIDE.launch();
             return;
@@ -49,7 +46,6 @@ public class Main {
             System.out.println("====================");
 
             try {
-                // Optional second arg sets where the tokens get saved
                 String name = path.getFileName().toString();
                 Path written = args.length == 2
                     ? SymbolTable.writeTo(SourceFiles.toPath(args[1]), name, tokens)

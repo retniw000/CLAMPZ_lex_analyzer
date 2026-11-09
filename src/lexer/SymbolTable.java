@@ -8,7 +8,6 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
-// Formats the lexer's tokens as the Symbol Table text file
 public final class SymbolTable {
 
     public static final String FILE_NAME = "SymbolTable.txt";
@@ -16,7 +15,6 @@ public final class SymbolTable {
     // Longest lexeme shown in full; longer ones are cut to 27 characters + "..."
     private static final int MAX_LEXEME = 30;
 
-    // Fixed column widths: No. | Line | Lexeme | Token | Category | Remarks
     private static final String ROW = "%-6s%-7s%-31s%-21s%-22s%s%n";
 
     private SymbolTable() { }
@@ -62,7 +60,6 @@ public final class SymbolTable {
         return writeTo(folder.resolve(FILE_NAME), sourceName, tokens);
     }
 
-    // Save the table to a file the user picked
     public static Path writeTo(Path file, String sourceName, List<Token> tokens) throws IOException {
         Files.writeString(file, format(sourceName, tokens), StandardCharsets.UTF_8);
         return file;

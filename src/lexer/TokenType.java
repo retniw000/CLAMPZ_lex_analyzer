@@ -2,13 +2,11 @@ package lexer;
 
 public enum TokenType {
 
-    // Keywords (data types)
     INT(Category.KEYWORD),
     FLOAT(Category.KEYWORD),
     BOOL(Category.KEYWORD),
     STRING(Category.KEYWORD),
 
-    // Keywords
     VOID(Category.KEYWORD),
     CACHE(Category.KEYWORD),
     CLASS(Category.KEYWORD),
@@ -27,7 +25,6 @@ public enum TokenType {
     LIMIT(Category.KEYWORD),
     STOP(Category.KEYWORD),
 
-    // Reserved words
     MAIN(Category.RESERVED_WORD),
     SKIP(Category.RESERVED_WORD),
 
@@ -36,7 +33,6 @@ public enum TokenType {
 
     IDENTIFIER(Category.IDENTIFIER),
 
-    // Constants
     INTEGER(Category.CONSTANT),
     FLOAT_LITERAL(Category.CONSTANT),
     STRING_LITERAL(Category.CONSTANT),
@@ -44,7 +40,6 @@ public enum TokenType {
     BOOL_LITERAL(Category.CONSTANT),
     CHAR_LITERAL(Category.CONSTANT),
 
-    // Arithmetic operators
     PLUS(Category.ARITHMETIC_OPERATOR),
     MINUS(Category.ARITHMETIC_OPERATOR),
     MULTIPLY(Category.ARITHMETIC_OPERATOR),
@@ -52,13 +47,11 @@ public enum TokenType {
     MODULO(Category.ARITHMETIC_OPERATOR),
     POWER(Category.ARITHMETIC_OPERATOR),
 
-    // Unary arithmetic operators
     INCREMENT(Category.ARITHMETIC_OPERATOR),
     DECREMENT(Category.ARITHMETIC_OPERATOR),
 
     ASSIGN(Category.ASSIGNMENT_OPERATOR),
 
-    // Boolean operators: relational
     EQUAL(Category.RELATIONAL_OPERATOR),
     NOT_EQUAL(Category.RELATIONAL_OPERATOR),
     LESS_THAN(Category.RELATIONAL_OPERATOR),
@@ -66,28 +59,23 @@ public enum TokenType {
     LESS_EQUAL(Category.RELATIONAL_OPERATOR),
     GREATER_EQUAL(Category.RELATIONAL_OPERATOR),
 
-    // Boolean operators: logical
     NOT(Category.LOGICAL_OPERATOR),
     AND(Category.LOGICAL_OPERATOR),
     OR(Category.LOGICAL_OPERATOR),
 
-    // Delimiters and brackets
     SEMICOLON(Category.DELIMITER),
     COMMA(Category.DELIMITER),
-    // Member access: object.field
     DOT(Category.DELIMITER),
-    LEFT_PAREN(Category.BRACKET),
-    RIGHT_PAREN(Category.BRACKET),
+    LEFT_PARENTHESIS(Category.BRACKET),
+    RIGHT_PARENTHESIS(Category.BRACKET),
     LEFT_BRACE(Category.BRACKET),
     RIGHT_BRACE(Category.BRACKET),
     LEFT_BRACKET(Category.BRACKET),
     RIGHT_BRACKET(Category.BRACKET),
 
-    // Comments: // ... and /* ... */
     SINGLE_LINE_COMMENT(Category.COMMENT),
     MULTI_LINE_COMMENT(Category.COMMENT),
 
-    // A lexeme that matches no rule of the language
     INVALID(Category.INVALID),
 
     EOF(Category.END);
